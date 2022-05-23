@@ -8,9 +8,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--ResourceDictionary Source="Theme/MenuButtonTheme.xaml" />
-
-                <ResourceDictionary Source="Theme/TextBoxTheme.xaml" /-->
+                <ResourceDictionary Source="Theme/TextBlockTheme.xaml" />
+                <ResourceDictionary Source="Theme/MenuButtonTheme.xaml" />
+                <ResourceDictionary Source="Theme/PressButtonTheme.xaml" />
+                <ResourceDictionary Source="Theme/TextBoxTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewModel:CounterViewModel}">
                 <view:CounterViewUserControl/>
