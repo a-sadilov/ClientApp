@@ -4,9 +4,52 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
+        xmlns:viewModel="clr-namespace:Client.ViewModel"
+        xmlns:Button="clr-namespace:Client.CustomControls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="MainWindow" 
+        Height="600" Width="800"
+        MinHeight="428"
+        MinWidth="428"
+        MaxHeight="960"
+        MaxWidth="960"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent">
+        <Window.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <!--ResourceDictionary Source="/resources/icons.xaml"/-->
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Window.Resources>
+<Grid>
+        <Border
+            Background="#282D33"
+            BorderBrush="#3A4149"
+            BorderThickness="5"
+            CornerRadius="8,8,0,8"/>
+        <!--Grid.ColumnDefinitions>
+            <ColumnDefinition Width="361*"/>
+            <ColumnDefinition Width="431*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="connectButton" Content="Connect" HorizontalAlignment="Left" Margin="190,11,0,0" VerticalAlignment="Top" Width="76" Height="23" Click="connectButton_Click_1"/>
+        <TextBox x:Name="textBoxIP" HorizontalAlignment="Left" Height="23" Margin="66,11,0,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="66,47,0,0" TextWrapping="Wrap" Text="Запрос" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="sendButton" Content="Send" HorizontalAlignment="Left" Margin="190,47,0,0" VerticalAlignment="Top" Width="76" Height="23" Click="sendButton_Click"/>
+        <ListBox x:Name="logListBox" Margin="10,11,10,10" Grid.Column="1"/>
+        <GroupBox x:Name="groupBox" Header="Меню поиска сервера(синхр)" Height="114" Margin="10,90,10,0" VerticalAlignment="Top">
+            <Grid HorizontalAlignment="Left" Height="90" VerticalAlignment="Top" Width="331" Margin="0,0,-2,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="163*"/>
+                    <ColumnDefinition Width="168*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="button1" Content="Вычислить по IP" Grid.Column="1" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top" Width="148" Height="26" Click="button1_Click"/>
+                <TextBox x:Name="HackIpServerTextBox" HorizontalAlignment="Left" Height="23" Margin="10,28,0,0" TextWrapping="Wrap" Text="192.168.0.0" VerticalAlignment="Top" Width="143"/>
+            </Grid>
+        </GroupBox>
+        <StackPanel Grid.Column="1" HorizontalAlignment="Left" Height="100" Margin="0,167,0,0" VerticalAlignment="Top" Width="100"/-->
     </Grid>
 </Window>
