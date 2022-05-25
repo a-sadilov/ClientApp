@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace Client.Views
 {
     /// <summary>
@@ -23,6 +25,13 @@ namespace Client.Views
         public SettingsViewUserControl()
         {
             InitializeComponent();
+            
+        }
+
+        private void ButtonConnect_Click(object sender, EventArgs e)
+        {
+            Models.Client client = new Models.Client(textBoxServerIp.Text, textBoxPort.Text);
+            //DataContext = client;
         }
     }
 }

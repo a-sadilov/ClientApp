@@ -3,10 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Client.Views"
-             mc:Ignorable="d" 
+             xmlns:local="clr-namespace:Client.Views" 
+             xmlns:models="clr-namespace:Client.Models" 
+             d:DataContext="{d:DesignInstance Type=models:Client}"
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent">
+    <!--UserControl.Resources>
+        <ControlTemplate x:Key="validationFailed">
+            <StackPanel Orientation="Horizontal">
+                <Border BorderBrush="Violet" BorderThickness="2">
+                    <AdornedElementPlaceholder />
+                </Border>
+                <TextBlock Foreground="Red" FontSize="26" FontWeight="Bold">!</TextBlock>
+            </StackPanel>
+        </ControlTemplate>
+    </UserControl.Resources-->
     <StackPanel
         Margin="0,0,0,20"
         VerticalAlignment="Top"
@@ -19,8 +31,12 @@
             Margin="5"
             />
         <TextBox 
+            x:Name="textBoxServerIp"
+            Text="{Binding Path=ServerIp}"
             Margin="5"
-            Style="{StaticResource ModernTextBox}"/>
+            Style="{StaticResource ModernTextBox}"
+            >
+        </TextBox>
         <TextBlock
             Style="{StaticResource MenuTextBlockStyle}"
             Text="Enter Port:"
@@ -28,14 +44,19 @@
             VerticalAlignment="Center"
             Margin="5"/>
 
-        <TextBox 
+        <TextBox
+            Text="{Binding Path=ServerPort}"
+            x:Name="textBoxPort"
             Margin="5"
-            Style="{StaticResource ModernTextBox}"/>
+            Style="{StaticResource ModernTextBox}"
+            >
+        </TextBox>
         <Button 
-            
+            x:Name="btnConnect"
             Margin="5"
             Content="Connect" 
-            Style="{StaticResource PressButtonStyle}">
+            Style="{StaticResource PressButtonStyle}"
+            Click="ButtonConnect_Click">
         </Button>
     </StackPanel>
 </UserControl>
