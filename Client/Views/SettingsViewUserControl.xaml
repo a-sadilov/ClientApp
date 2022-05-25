@@ -9,16 +9,11 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent">
-    <!--UserControl.Resources>
-        <ControlTemplate x:Key="validationFailed">
-            <StackPanel Orientation="Horizontal">
-                <Border BorderBrush="Violet" BorderThickness="2">
-                    <AdornedElementPlaceholder />
-                </Border>
-                <TextBlock Foreground="Red" FontSize="26" FontWeight="Bold">!</TextBlock>
-            </StackPanel>
-        </ControlTemplate>
-    </UserControl.Resources-->
+    
+    <UserControl.DataContext>
+        <models:Client/>
+    </UserControl.DataContext>
+    
     <StackPanel
         Margin="0,0,0,20"
         VerticalAlignment="Top"
@@ -32,10 +27,16 @@
             />
         <TextBox 
             x:Name="textBoxServerIp"
-            Text="{Binding Path=ServerIp}"
             Margin="5"
-            Style="{StaticResource ModernTextBox}"
             >
+            <TextBox.Text>
+                
+                <Binding Path="ServerIp">
+                    <Binding.ValidationRules>
+                        <ExceptionValidationRule />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
         </TextBox>
         <TextBlock
             Style="{StaticResource MenuTextBlockStyle}"
@@ -45,11 +46,16 @@
             Margin="5"/>
 
         <TextBox
-            Text="{Binding Path=ServerPort}"
             x:Name="textBoxPort"
             Margin="5"
-            Style="{StaticResource ModernTextBox}"
             >
+            <TextBox.Text>
+                <Binding Path="ServerPort">
+                    <Binding.ValidationRules>
+                        <ExceptionValidationRule />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
         </TextBox>
         <Button 
             x:Name="btnConnect"

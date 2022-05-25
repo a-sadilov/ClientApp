@@ -8,68 +8,34 @@ using System.Net.Sockets;
 using System.ComponentModel;
 using System.Windows;
 using System.ComponentModel.DataAnnotations;
+using Client.Core;
 
 namespace Client.Models
 {
-    class Client : INotifyPropertyChanged/*, IDataErrorInfo*/
+    public class Client : ObservableObject
     {
-        
-
-        /*public string Error => throw new NotImplementedException();
-
-        public string this[string columnName]
-        {
-            get
-            {
-                string error = String.Empty;
-                switch (columnName)
-                {
-                    case "IpAddress":
-                        if ()
-                }
-            }
-        }*/
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        private static IPAddress _serverIp;
+        private static IPAddress _serverIp = IPAddress.Loopback;
         private static int _serverPort = 8000;
         private static IPEndPoint _serverIpEndPoint;
 
         private Socket _connectionSocket;
-        
-        public Client(string serverIp, string serverPort)
-        {
-            ServerPort = serverPort;
-            _connectionSocket = new Socket(AddressFamily.InterNetwork,
-                                               SocketType.Stream,
-                                               ProtocolType.Tcp);
 
-            ServerIp = serverIp;
-            _serverIpEndPoint = new IPEndPoint(_serverIp, _serverPort);
+        public Client()
+        {
         }
 
-
-        [Range(1, 25555)]
+        [Range(1000, 65535)]
         //[DefaultValue("8000")]
         public string ServerPort
         {
-            get
-            {
-               return _serverIp.ToString();
-            }
+            get{ return _serverPort.ToString();}
             set
             {
                 if (Int32.TryParse(value, out Client._serverPort))
                 {
-                    if(_serverIpEndPoint != null)
+                    if (_serverIpEndPoint != null)
                         _serverIpEndPoint.Port = Client._serverPort;
-                    OnPropertyChanged("serverPort");
+                    OnPropertyChanged();
                 }
                 else
                 {
@@ -78,7 +44,7 @@ namespace Client.Models
             }
         }
         //[DefaultValue("192.168.0.107")]
-        [StringLength(32,MinimumLength = 8, ErrorMessage = "Wrong IP-Adress lenght")]
+        [StringLength(32, MinimumLength = 8, ErrorMessage = "Wrong IP-Adress lenght")]
         public string ServerIp
         {
             get
@@ -99,7 +65,7 @@ namespace Client.Models
                 {
                     if (_serverIpEndPoint != null)
                         _serverIpEndPoint.Address = _serverIp;
-                    OnPropertyChanged("serverIp");
+                    OnPropertyChanged();
                 }
                 else
                 {
@@ -107,6 +73,19 @@ namespace Client.Models
                 }
             }
         }
+
+        public Client(string serverIp, string serverPort)
+        {
+            ServerPort = serverPort;
+            ServerIp = serverIp;
+            _connectionSocket = new Socket(AddressFamily.InterNetwork,
+                                               SocketType.Stream,
+                                               ProtocolType.Tcp);
+
+            _serverIpEndPoint = new IPEndPoint(_serverIp, _serverPort);
+        }
+
+
 
         public bool ConnectSocket()
         {
@@ -127,7 +106,6 @@ namespace Client.Models
                 {
                     MessageBox.Show("Already connected");
                 }
-
                 return false;
             }
             catch (Exception e)

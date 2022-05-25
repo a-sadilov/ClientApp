@@ -22,6 +22,7 @@ namespace Client.Views
     /// </summary>
     public partial class SettingsViewUserControl : UserControl
     {
+        private static Models.Client client;
         public SettingsViewUserControl()
         {
             InitializeComponent();
@@ -30,8 +31,46 @@ namespace Client.Views
 
         private void ButtonConnect_Click(object sender, EventArgs e)
         {
-            Models.Client client = new Models.Client(textBoxServerIp.Text, textBoxPort.Text);
-            //DataContext = client;
+            try
+            {
+                switch (btnConnect.Content.ToString())
+                {
+                    case "Disconnect":
+                        client.CloseSocket();
+                        btnConnect.Content = "Connect";
+                        textBoxPort.IsEnabled = true;
+                        textBoxServerIp.IsEnabled = true;
+                        break;
+                    case "Connect":
+                        client = new Models.Client(textBoxServerIp.Text, textBoxPort.Text);
+                        if (client.ConnectSocket())
+                        {
+                            btnConnect.Content = "Disconnect";
+                            textBoxPort.IsEnabled = false;
+                            textBoxServerIp.IsEnabled = false;
+                        }
+                        break;
+                }
+            }
+            catch (Exception E)
+            {
+                MessageBox.Show(E.Message.ToString());
+            }
+        }
+
+        private void sendButton_Click(object sender, RoutedEventArgs e)
+        {
+            byte[] messageToServer = Encoding.UTF8.GetBytes(textBoxServerIp.Text);
+            byte[] rxBuf = new byte[1024];
+
+            if (client.SendAndGetResponse(ref messageToServer, ref rxBuf))
+            {
+                string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
+
+            }
+            client.CloseSocket();
         }
     }
+
+
 }
