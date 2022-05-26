@@ -1,14 +1,16 @@
 ﻿using Client.Core;
+using Client.Views;
 
 namespace Client.ViewModel
 {
     class MainViewModel : ObservableObject
     {
+        //private static Models.Client client = new Models.Client();
         public RelayCommand SettingsViewCommand { get; set; }
         public RelayCommand CounterViewCommand { get; set; }
         private object _currenView;
-        public SettingsViewModel SettingsVM { get; set; }
-        public CounterViewModel CounterVM { get; set; }
+        public SettingsViewUserControl SettingsVM { get; set; }
+        public CounterViewUserControl CounterVM { get; set; }
         public object CurrenView
         {
             get { return _currenView; }
@@ -21,8 +23,8 @@ namespace Client.ViewModel
 
         public MainViewModel()
         {
-            SettingsVM = new SettingsViewModel();
-            CounterVM = new CounterViewModel();
+            SettingsVM = new SettingsViewUserControl();
+            CounterVM = new CounterViewUserControl(SettingsViewUserControl.client);
             CurrenView = SettingsVM;
             SettingsViewCommand = new RelayCommand(o =>
             {
