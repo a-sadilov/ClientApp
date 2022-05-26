@@ -14,14 +14,20 @@ namespace Client.Models
 {
     public class Client : ObservableObject
     {
-        private static IPAddress _serverIp = IPAddress.Loopback;
-        private static int _serverPort = 8000;
+        private static IPAddress _serverIp;
+        private static int _serverPort;
         private static IPEndPoint _serverIpEndPoint;
-
         private Socket _connectionSocket;
 
         public Client()
         {
+            _serverPort = 8000;
+            _serverIp = IPAddress.Loopback;
+            _connectionSocket = new Socket(AddressFamily.InterNetwork,
+                                               SocketType.Stream,
+                                               ProtocolType.Tcp);
+
+            _serverIpEndPoint = new IPEndPoint(_serverIp, _serverPort);
         }
 
         [Range(1000, 65535)]
