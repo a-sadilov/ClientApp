@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="Client.Views.CounterViewUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Client.Views"
+             xmlns:models="clr-namespace:Client.Models" 
+             d:DataContext="{d:DesignInstance Type=models:Client}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="Transparent">
+    <UserControl.DataContext>
+        <models:Client/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+
+        </Grid.RowDefinitions>
+        <TextBlock
+            x:Name="CounterLabel"
+            Grid.Row="0" Grid.ColumnSpan="2"
+            Style="{StaticResource MenuTextBlockStyle}"
+            Text="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Stretch"
+            FontSize="45"
+            MaxHeight="80"
+            MaxWidth="300"
+            Margin="15,15,15,15"/>
+        <Button
+            x:Name="StartStopButton"
+            Height="80"
+            Margin="5,5,5,5"
+            Grid.Row="1" Grid.Column="0"
+            Click="StartStopButton_Click"
+            Content="Start" 
+            Style="{StaticResource PressButtonStyle}">
+            
+        </Button>
+        <Button
+            x:Name="ClearButton"
+            Height="80"
+            Margin="5,5,5,5"
+            Grid.Row="1" Grid.Column="1"
+            MinHeight="40"
+            MinWidth="200"
+            Content="Clear" 
+            Click="ClearButton_Click"
+            IsEnabled="False"
+            Style="{StaticResource PressButtonStyle}">
+        </Button>
+    </Grid>
+</UserControl>

@@ -4,9 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
+        xmlns:viewModel="clr-namespace:Client.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" 
+        Height="428" Width="600"
+        MinHeight="400"
+        MinWidth="428"
+        MaxHeight="560"
+        MaxWidth="740"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent">
+        <Window.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <!--ResourceDictionary Source="/resources/icons.xaml"/-->
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Window.Resources>
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+    <Border Background="#282D33"
+            BorderBrush="#3A4149"
+            BorderThickness="5"
+            CornerRadius="8,8,0,8">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+                <RowDefinition/>
+
+            </Grid.RowDefinitions>
+            <TextBlock Text="Counter."
+                   Foreground="WhiteSmoke"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontSize="32"  FontFamily="Arial Rounded MT Bold"
+                           Margin="0,0,0,0"/>
+            <StackPanel Grid.Row="1">
+                <RadioButton Content="Settings"
+                             Height="50"
+                             Foreground="White"
+                             FontSize="18"
+                             Style="{StaticResource MenuButtonTheme}"
+                             IsChecked="True"
+                             Command="{Binding SettingsViewCommand}"/>
+                <RadioButton Content="Counter"
+                             Height="50"
+                             Foreground="White"
+                             FontSize="18"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding CounterViewCommand}"/>
+
+            </StackPanel>
+            <ContentControl Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10"
+                            Content="{Binding CurrenView}"/>
+        </Grid>
+    </Border>
 </Window>
