@@ -17,13 +17,13 @@ namespace Client.Models
         private static IPAddress _serverIp;
         private static int _serverPort;
         private static IPEndPoint _serverIpEndPoint;
-        private Socket _connectionSocket;
+        internal Socket connectionSocket;
 
         public Client()
         {
             _serverPort = 8000;
-            _serverIp = IPAddress.Loopback;
-            _connectionSocket = new Socket(AddressFamily.InterNetwork,
+            _serverIp = IPAddress.Parse("192.168.0.107");
+            connectionSocket = new Socket(AddressFamily.InterNetwork,
                                                SocketType.Stream,
                                                ProtocolType.Tcp);
 
@@ -31,7 +31,6 @@ namespace Client.Models
         }
 
         [Range(1000, 65535)]
-        //[DefaultValue("8000")]
         public string ServerPort
         {
             get{ return _serverPort.ToString();}
@@ -49,7 +48,7 @@ namespace Client.Models
                 }
             }
         }
-        //[DefaultValue("192.168.0.107")]
+
         [StringLength(32, MinimumLength = 8, ErrorMessage = "Wrong IP-Adress lenght")]
         public string ServerIp
         {
@@ -84,7 +83,7 @@ namespace Client.Models
         {
             ServerPort = serverPort;
             ServerIp = serverIp;
-            _connectionSocket = new Socket(AddressFamily.InterNetwork,
+            connectionSocket = new Socket(AddressFamily.InterNetwork,
                                                SocketType.Stream,
                                                ProtocolType.Tcp);
 
@@ -97,15 +96,15 @@ namespace Client.Models
         {
             try
             {
-                if (!_connectionSocket.Connected)
+                if (!connectionSocket.Connected)
                 {
-                    _connectionSocket = new Socket(AddressFamily.InterNetwork,
+                    connectionSocket = new Socket(AddressFamily.InterNetwork,
                                                SocketType.Stream,
                                                ProtocolType.Tcp);
 
                     //_connectionSocket.ReceiveTimeout = 1;
                     //_connectionSocket.SendTimeout = 500;
-                    _connectionSocket.Connect(_serverIpEndPoint);
+                    connectionSocket.Connect(_serverIpEndPoint);
                     return true;
                 }
                 else
@@ -121,13 +120,11 @@ namespace Client.Models
             }
 
         }
-
-        public bool SendAndGetResponse(ref byte[] sendBuf, ref byte[] outBuf)
+        public bool SendRequest(ref byte[] sendBuf)
         {
-            if (_connectionSocket.Connected)
+            if (connectionSocket.Connected)
             {
-                _connectionSocket.Send(sendBuf);
-                _connectionSocket.Receive(outBuf);
+                connectionSocket.Send(sendBuf);
                 return true;
             }
             else
@@ -137,11 +134,28 @@ namespace Client.Models
             }
         }
 
+
+        /*public bool SendAndGetResponse(ref byte[] sendBuf, ref byte[] outBuf)
+        {
+            if (connectionSocket.Connected)
+            {
+                connectionSocket.Send(sendBuf);
+                connectionSocket.Receive(outBuf);
+                return true;
+            }
+            else
+            {
+                MessageBox.Show("Socket is closed");
+                return false;
+            }
+        }*/
+
         public bool CloseSocket()
         {
-            if (_connectionSocket.Connected)
+            if (connectionSocket.Connected)
             {
-                _connectionSocket.Close();
+                connectionSocket.Shutdown(SocketShutdown.Both);
+                connectionSocket.Close();
                 return true;
             }
             else
@@ -149,6 +163,8 @@ namespace Client.Models
                 return false;
             }
         }
+
+
 
 
 

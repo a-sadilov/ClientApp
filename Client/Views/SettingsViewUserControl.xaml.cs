@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,13 +19,9 @@ using System.Windows.Shapes;
 
 namespace Client.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для SettingsViewUserControl.xaml
-    /// </summary>
     public partial class SettingsViewUserControl : UserControl
     {
-        internal static Models.Client client =  new Models.Client();
-        //internal static Models.Client Client { get { return client; } }
+        internal static Models.Client client = new Models.Client();
 
         public SettingsViewUserControl()
         {
@@ -63,8 +60,5 @@ namespace Client.Views
                 MessageBox.Show(E.Message.ToString());
             }
         }
-
     }
-
-
 }

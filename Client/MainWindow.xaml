@@ -16,7 +16,7 @@
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
-        Background="Transparent">
+        Background="Transparent" MouseDown="Window_MouseDown">
         <Window.Resources>
             <ResourceDictionary>
                 <ResourceDictionary.MergedDictionaries>
@@ -47,14 +47,18 @@
                            FontSize="32"  FontFamily="Arial Rounded MT Bold"
                            Margin="0,0,0,0"/>
             <StackPanel Grid.Row="1">
-                <RadioButton Content="Settings"
+                <RadioButton 
+                    x:Name="MainSettingsBtn"
+                    Content="Settings"
                              Height="50"
                              Foreground="White"
                              FontSize="18"
                              Style="{StaticResource MenuButtonTheme}"
                              IsChecked="True"
                              Command="{Binding SettingsViewCommand}"/>
-                <RadioButton Content="Counter"
+                <RadioButton 
+                    x:Name="MainCounterBtn"
+                    Content="Counter"
                              Height="50"
                              Foreground="White"
                              FontSize="18"

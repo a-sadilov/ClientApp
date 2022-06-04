@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,43 +21,41 @@ namespace Client.Views
     /// </summary>
     public partial class CounterViewUserControl : UserControl
     {
-        internal static Models.Client client;
-        public CounterViewUserControl(Models.Client _client)
+        public CounterViewUserControl()
         {
             InitializeComponent();
-            client = _client;
+            ClearButton.IsEnabled = false;
         }
-
         private void StartStopButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                //new Thread(() => CounterUpdater()).Start();
                 ClearButton.IsEnabled = true;
-                string cmd = ClearButton.Content.ToString();
+                string cmd = StartStopButton.Content.ToString();
                 byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                byte[] rxBuf = new byte[12];
-                if (client.SendAndGetResponse(ref messageToServer, ref rxBuf))
+                /*byte[] rxBuf = new byte[12];*/
+                if (SettingsViewUserControl.client.SendRequest(ref messageToServer))
                 {
-                    string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
-                    if (serverResponse == "200OK_" + cmd)
+                    /*string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
+                    char[] charsToTrim = {'\0'};
+                    serverResponse = serverResponse.Trim(charsToTrim);*/
+                    switch (cmd)
                     {
-                        switch (cmd)
-                        {
-                            case "Start":
-                                StartStopButton.Content = "Stop";
-                                break;
-                            case "Stop":
-                                StartStopButton.Content = "Start";
-                                break;
-                        }
+                        case "Start":
+                            StartStopButton.Content = "Stop";
+                            break;
+                        case "Stop":
+                            StartStopButton.Content = "Start";
+                            break;
                     }
                 }
             }
             catch (Exception E)
             {
-                MessageBox.Show(E.Message.ToString());
+                //MessageBox.Show(E.Message.ToString());
+                MessageBox.Show(E.Message + ":\n" + E.StackTrace);
             }
-            
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
@@ -65,21 +64,56 @@ namespace Client.Views
             {
                 string cmd = ClearButton.Content.ToString();
                 byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                byte[] rxBuf = new byte[12];
-                if (client.SendAndGetResponse(ref messageToServer, ref rxBuf))
+                /*byte[] rxBuf = new byte[12];*/
+                if (SettingsViewUserControl.client.SendRequest(ref messageToServer))
                 {
-                    string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
-                    if(serverResponse == "200OK_" + cmd)
-                    {
-                        CounterLabel.Text = "0";
-                        ClearButton.IsEnabled = false;
-                        StartStopButton.Content = "Start";
-                    }
+                    /*string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
+                    char[] charsToTrim = { '\0' };
+                    serverResponse = serverResponse.Trim(charsToTrim);
+                    if (serverResponse == "200OK_Clear")
+                    {*/
+                    CounterLabel.Text = "0";
+                    StartStopButton.Content = "Start";
+                    ClearButton.IsEnabled = false;
                 }
             }
             catch (Exception E)
             {
-                MessageBox.Show(E.Message.ToString());
+                MessageBox.Show(E.Message + ":\n" + E.StackTrace);
+            }
+        }
+        public void CounterUpdater()
+        {
+            while (SettingsViewUserControl.client.connectionSocket.Connected)
+            {
+            receive:
+                try
+                {
+                    StringBuilder builder = new StringBuilder();
+                    int bytes = 0;
+                    byte[] data = new byte[32];
+                    do
+                    {
+                        bytes = SettingsViewUserControl.client.connectionSocket.Receive(data);
+                        builder.Append(Encoding.UTF8.GetString(data, 0, bytes));
+                    } while (SettingsViewUserControl.client.connectionSocket.Available > 0);
+
+                    if (builder == null)
+                    {
+                        throw new Exception();
+                    }
+                    else
+                    {
+                        string message = builder.ToString();
+                        Dispatcher?.Invoke(() => CounterLabel.Text = message);
+                        InitializeComponent();
+                    }
+
+                }
+                catch (Exception)
+                {
+                    goto receive;
+                }
             }
         }
     }
