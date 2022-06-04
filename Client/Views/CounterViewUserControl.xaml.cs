@@ -86,7 +86,6 @@ namespace Client.Views
         {
             while (SettingsViewUserControl.client.connectionSocket.Connected)
             {
-            receive:
                 try
                 {
                     StringBuilder builder = new StringBuilder();
@@ -106,15 +105,16 @@ namespace Client.Views
                     {
                         string message = builder.ToString();
                         Dispatcher?.Invoke(() => CounterLabel.Text = message);
+                        Dispatcher?.Invoke(() => StartStopButton.Content = "Stop");
                         InitializeComponent();
                     }
-
                 }
                 catch (Exception)
                 {
-                    goto receive;
+                    Thread.CurrentThread.Abort();
                 }
             }
+            //Thread.CurrentThread.Abort();
         }
     }
 }

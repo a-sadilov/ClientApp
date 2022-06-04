@@ -30,12 +30,14 @@ namespace Client.ViewModel
             SettingsViewCommand = new RelayCommand(o =>
             {
                 CurrenView = SettingsVM;
-                
             });
             CounterViewCommand = new RelayCommand(o =>
             {
                 CurrenView = CounterVM;
-                new Thread(() => CounterVM.CounterUpdater()).Start();
+                if (SettingsViewUserControl.client.connectionSocket.Connected)
+                {
+                    new Thread(() => CounterVM.CounterUpdater()).Start();
+                }
             });
         }
     }
