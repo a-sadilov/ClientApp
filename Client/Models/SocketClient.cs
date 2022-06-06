@@ -12,26 +12,13 @@ using Client.Core;
 
 namespace Client.Models
 {
-    public class SocketClient : ObservableObject
+    public class SocketClient : ClientBase
     {
-        private static IPAddress _serverIp;
-        private static int _serverPort;
         private static IPEndPoint _serverIpEndPoint;
         internal Socket connectionSocket;
 
-        public SocketClient()
-        {
-            _serverPort = 8000;
-            _serverIp = IPAddress.Parse("192.168.0.107");
-            connectionSocket = new Socket(AddressFamily.InterNetwork,
-                                               SocketType.Stream,
-                                               ProtocolType.Tcp);
-
-            _serverIpEndPoint = new IPEndPoint(_serverIp, _serverPort);
-        }
-
         [Range(1000, 65535)]
-        public string ServerPort
+        public override string ServerPort
         {
             get{ return _serverPort.ToString();}
             set
@@ -50,7 +37,7 @@ namespace Client.Models
         }
 
         [StringLength(32, MinimumLength = 8, ErrorMessage = "Wrong IP-Adress lenght")]
-        public string ServerIp
+        public override string ServerIp
         {
             get
             {
@@ -60,7 +47,7 @@ namespace Client.Models
                 }
                 else
                 {
-                    MessageBox.Show("Попытка взятия IP-сервера : IP not given");
+                    MessageBox.Show("Попытка взятия IP-сервера : IP не задан");
                     return null;
                 }
             }
@@ -78,7 +65,16 @@ namespace Client.Models
                 }
             }
         }
+        public SocketClient()
+        {
+            _serverPort = 8000;
+            _serverIp = IPAddress.Parse("192.168.0.107");
+            connectionSocket = new Socket(AddressFamily.InterNetwork,
+                                               SocketType.Stream,
+                                               ProtocolType.Tcp);
 
+            _serverIpEndPoint = new IPEndPoint(_serverIp, _serverPort);
+        }
         public SocketClient(string serverIp, string serverPort)
         {
             ServerPort = serverPort;
@@ -90,9 +86,7 @@ namespace Client.Models
             _serverIpEndPoint = new IPEndPoint(_serverIp, _serverPort);
         }
 
-
-
-        public bool ConnectSocket()
+        public override bool Connect()
         {
             try
             {
@@ -101,9 +95,6 @@ namespace Client.Models
                     connectionSocket = new Socket(AddressFamily.InterNetwork,
                                                SocketType.Stream,
                                                ProtocolType.Tcp);
-
-                    //_connectionSocket.ReceiveTimeout = 1;
-                    //_connectionSocket.SendTimeout = 500;
                     connectionSocket.Connect(_serverIpEndPoint);
                     return true;
                 }
@@ -111,46 +102,15 @@ namespace Client.Models
                 {
                     MessageBox.Show("Already connected");
                 }
-                return false;
+                return true;
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message.ToString());
                 return false;
             }
-
         }
-        public bool SendRequest(ref byte[] sendBuf)
-        {
-            if (connectionSocket.Connected)
-            {
-                connectionSocket.Send(sendBuf);
-                return true;
-            }
-            else
-            {
-                MessageBox.Show("Socket is closed");
-                return false;
-            }
-        }
-
-
-        /*public bool SendAndGetResponse(ref byte[] sendBuf, ref byte[] outBuf)
-        {
-            if (connectionSocket.Connected)
-            {
-                connectionSocket.Send(sendBuf);
-                connectionSocket.Receive(outBuf);
-                return true;
-            }
-            else
-            {
-                MessageBox.Show("Socket is closed");
-                return false;
-            }
-        }*/
-
-        public bool CloseSocket()
+        public override bool Disconnect()
         {
             if (connectionSocket.Connected)
             {
@@ -164,7 +124,30 @@ namespace Client.Models
             }
         }
 
+        public override bool Send(string message)
+        {
+            byte[] sendBuf = Encoding.UTF8.GetBytes(message);
+            if (this.connectionSocket.Connected)
+            {
+                connectionSocket.Send(sendBuf);
+                return true;
+            }
+            else
+            {
+                MessageBox.Show("Нет подключения к серверу");
+                return false;
+            }
+        }
 
+        public string Recieve()
+        {
+            StringBuilder builder = new StringBuilder();
+            int bytes = 0;
+            byte[] data = new byte[15];
+            bytes = this.connectionSocket.Receive(data);
+            builder.Append(Encoding.UTF8.GetString(data, 0, bytes));
+            return builder.ToString();
+        }
 
 
 
@@ -216,5 +199,7 @@ namespace Client.Models
             NetworkStream stream = client.GetStream();
             return stream;
         }
+
+        
     }
 }

@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using Client.ViewModel;
+using Client.Models.Core;
 
 namespace Client.Views
 {
@@ -21,6 +11,7 @@ namespace Client.Views
     /// </summary>
     public partial class CounterViewUserControl : UserControl
     {
+        public CurrentCount currentCount = new CurrentCount();
         public CounterViewUserControl()
         {
             InitializeComponent();
@@ -32,8 +23,7 @@ namespace Client.Views
             {
                 ClearButton.IsEnabled = true;
                 string cmd = StartStopButton.Content.ToString();
-                byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                if (SettingsViewUserControl.client.SendRequest(ref messageToServer))
+                if (SettingsViewUserControl.client.Send(cmd))
                 {
                     switch (cmd)
                     {
@@ -49,7 +39,6 @@ namespace Client.Views
             catch (Exception E)
             {
                 MessageBox.Show(E.Message.ToString());
-                //MessageBox.Show(E.Message + ":\n" + E.StackTrace);
             }
         }
 
@@ -58,8 +47,7 @@ namespace Client.Views
             try
             {
                 string cmd = ClearButton.Content.ToString();
-                byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                if (SettingsViewUserControl.client.SendRequest(ref messageToServer))
+                if (SettingsViewUserControl.client.Send(cmd))
                 {
                     CounterLabel.Text = "0";
                     StartStopButton.Content = "Start";
@@ -77,30 +65,22 @@ namespace Client.Views
             {
                 try
                 {
-                    StringBuilder builder = new StringBuilder();
-                    int bytes = 0;
-                    byte[] data = new byte[32];
-                    do
-                    {
-                        bytes = SettingsViewUserControl.client.connectionSocket.Receive(data);
-                        builder.Append(Encoding.UTF8.GetString(data, 0, bytes));
-                    } while (SettingsViewUserControl.client.connectionSocket.Available > 0);
-
-                    if (builder == null)
+                    string response = SettingsViewUserControl.client.Recieve();
+                    this.currentCount.Counter = response;
+                    if (response == null)
                     {
                         throw new Exception();
                     }
                     else
                     {
-                        string message = builder.ToString();
-                        Dispatcher?.Invoke(() => CounterLabel.Text = message);
+                        Dispatcher?.Invoke(() => CounterLabel.Text = response);
                         Dispatcher?.Invoke(() => StartStopButton.Content = "Stop");
                         InitializeComponent();
                     }
                 }
                 catch (Exception)
                 {
-                    Thread.CurrentThread.Abort();
+                    //Thread.CurrentThread.Abort();
                 }
             }
         }
