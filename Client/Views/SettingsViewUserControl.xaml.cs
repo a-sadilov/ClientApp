@@ -21,8 +21,8 @@ namespace Client.Views
 {
     public partial class SettingsViewUserControl : UserControl
     {
-        internal static Models.Client client = new Models.Client();
-
+        internal static Models.SocketClient client = new Models.SocketClient();
+        internal static Models.WebSocketClient wsclient = new Models.WebSocketClient();
         public SettingsViewUserControl()
         {
             InitializeComponent();
@@ -32,27 +32,57 @@ namespace Client.Views
         {
             try
             {
-                switch (btnConnect.Content.ToString())
+                TextBlock sl = (TextBlock)ConnectionTypeList.SelectedItem;
+                switch (sl.Text)
                 {
-                    case "Disconnect":
+                    case "Socket":
+                        switch (btnConnect.Content.ToString())
                         {
-                            client.CloseSocket();
-                            btnConnect.Content = "Connect";
-                            textBoxPort.IsEnabled = true;
-                            textBoxServerIp.IsEnabled = true;
-                            break;
+                            case "Disconnect":
+                                {
+                                    client.CloseSocket();
+                                    btnConnect.Content = "Connect";
+                                    textBoxPort.IsEnabled = true;
+                                    textBoxServerIp.IsEnabled = true;
+                                    break;
+                                }
+                            case "Connect":
+                                {
+                                    client = new Models.SocketClient(textBoxServerIp.Text, textBoxPort.Text);
+                                    if (client.ConnectSocket())
+                                    {
+                                        btnConnect.Content = "Disconnect";
+                                        textBoxPort.IsEnabled = false;
+                                        textBoxServerIp.IsEnabled = false;
+                                    }
+                                    break;
+                                }
                         }
-                    case "Connect":
+                        break;
+                    case "WebSocket":
+                        switch (btnConnect.Content.ToString())
                         {
-                            client = new Models.Client(textBoxServerIp.Text, textBoxPort.Text);
-                            if (client.ConnectSocket())
-                            {
-                                btnConnect.Content = "Disconnect";
-                                textBoxPort.IsEnabled = false;
-                                textBoxServerIp.IsEnabled = false;
-                            }
-                            break;
+                            case "Disconnect":
+                                {
+                                    wsclient.Disconnect();
+                                    btnConnect.Content = "Connect";
+                                    textBoxPort.IsEnabled = true;
+                                    textBoxServerIp.IsEnabled = true;
+                                    break;
+                                }
+                            case "Connect":
+                                {
+                                    wsclient = new Models.WebSocketClient(textBoxServerIp.Text, textBoxPort.Text);
+                                    if (wsclient.Connect())
+                                    {
+                                        btnConnect.Content = "Disconnect";
+                                        textBoxPort.IsEnabled = false;
+                                        textBoxServerIp.IsEnabled = false;
+                                    }
+                                    break;
+                                }
                         }
+                        break;
                 }
             }
             catch (Exception E)

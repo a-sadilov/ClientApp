@@ -30,16 +30,11 @@ namespace Client.Views
         {
             try
             {
-                //new Thread(() => CounterUpdater()).Start();
                 ClearButton.IsEnabled = true;
                 string cmd = StartStopButton.Content.ToString();
                 byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                /*byte[] rxBuf = new byte[12];*/
                 if (SettingsViewUserControl.client.SendRequest(ref messageToServer))
                 {
-                    /*string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
-                    char[] charsToTrim = {'\0'};
-                    serverResponse = serverResponse.Trim(charsToTrim);*/
                     switch (cmd)
                     {
                         case "Start":
@@ -53,8 +48,8 @@ namespace Client.Views
             }
             catch (Exception E)
             {
-                //MessageBox.Show(E.Message.ToString());
-                MessageBox.Show(E.Message + ":\n" + E.StackTrace);
+                MessageBox.Show(E.Message.ToString());
+                //MessageBox.Show(E.Message + ":\n" + E.StackTrace);
             }
         }
 
@@ -64,14 +59,8 @@ namespace Client.Views
             {
                 string cmd = ClearButton.Content.ToString();
                 byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                /*byte[] rxBuf = new byte[12];*/
                 if (SettingsViewUserControl.client.SendRequest(ref messageToServer))
                 {
-                    /*string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
-                    char[] charsToTrim = { '\0' };
-                    serverResponse = serverResponse.Trim(charsToTrim);
-                    if (serverResponse == "200OK_Clear")
-                    {*/
                     CounterLabel.Text = "0";
                     StartStopButton.Content = "Start";
                     ClearButton.IsEnabled = false;
@@ -114,7 +103,6 @@ namespace Client.Views
                     Thread.CurrentThread.Abort();
                 }
             }
-            //Thread.CurrentThread.Abort();
         }
     }
 }

@@ -12,14 +12,14 @@ using Client.Core;
 
 namespace Client.Models
 {
-    public class Client : ObservableObject
+    public class SocketClient : ObservableObject
     {
         private static IPAddress _serverIp;
         private static int _serverPort;
         private static IPEndPoint _serverIpEndPoint;
         internal Socket connectionSocket;
 
-        public Client()
+        public SocketClient()
         {
             _serverPort = 8000;
             _serverIp = IPAddress.Parse("192.168.0.107");
@@ -36,10 +36,10 @@ namespace Client.Models
             get{ return _serverPort.ToString();}
             set
             {
-                if (Int32.TryParse(value, out Client._serverPort))
+                if (Int32.TryParse(value, out SocketClient._serverPort))
                 {
                     if (_serverIpEndPoint != null)
-                        _serverIpEndPoint.Port = Client._serverPort;
+                        _serverIpEndPoint.Port = SocketClient._serverPort;
                     OnPropertyChanged();
                 }
                 else
@@ -79,7 +79,7 @@ namespace Client.Models
             }
         }
 
-        public Client(string serverIp, string serverPort)
+        public SocketClient(string serverIp, string serverPort)
         {
             ServerPort = serverPort;
             ServerIp = serverIp;

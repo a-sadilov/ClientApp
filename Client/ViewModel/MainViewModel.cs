@@ -1,6 +1,8 @@
 ﻿using Client.Core;
 using Client.Views;
 using System.Threading;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Client.ViewModel
 {
@@ -21,6 +23,54 @@ namespace Client.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        public void CloseApp(object obj)
+        {
+            MainWindow win = obj as MainWindow;
+            win.Close();
+        }
+
+        private ICommand _closeCommand;
+
+        public ICommand CloseAppCommand
+        {
+            get
+            {
+                if (_closeCommand == null)
+                {
+                    _closeCommand = new RelayCommand(p => CloseApp(p));
+                }
+                return _closeCommand;
+            }
+        }
+
+        public void MaxApp(object obj)
+        {
+            MainWindow win = obj as MainWindow;
+
+            if (win.WindowState == WindowState.Normal)
+            {
+                win.WindowState = WindowState.Maximized;
+            }
+            else if (win.WindowState == WindowState.Maximized)
+            {
+                win.WindowState = WindowState.Normal;
+            }
+        }
+
+        private ICommand _maxCommand;
+        public ICommand MaxAppCommand
+        {
+            get
+            {
+                if (_maxCommand == null)
+                {
+                    _maxCommand = new RelayCommand(p => MaxApp(p));
+                }
+                return _maxCommand;
+            }
+        }
+
 
         public MainViewModel()
         {

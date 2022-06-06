@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Client.Views"
              xmlns:models="clr-namespace:Client.Models" 
-             d:DataContext="{d:DesignInstance Type=models:Client}"
+             d:DataContext="{d:DesignInstance Type=models:SocketClient}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent">
     <UserControl.DataContext>
-        <models:Client/>
+        <models:SocketClient/>
     </UserControl.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>

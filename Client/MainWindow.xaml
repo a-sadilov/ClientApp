@@ -70,6 +70,12 @@
                             Grid.Column="1"
                             Margin="10"
                             Content="{Binding CurrenView}"/>
+            <Button
+                Style="{StaticResource CloseButtonStyle}"
+                Grid.Row="0"
+                Grid.Column="1"
+                Command="{Binding CloseAppCommand}"
+                />
         </Grid>
     </Border>
 </Window>
