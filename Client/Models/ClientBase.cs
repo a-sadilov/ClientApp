@@ -54,9 +54,11 @@ namespace Client.Models
                 }
             }
         }
+
+        public abstract bool IsConnected { get; }
         public abstract bool Connect();
         public abstract bool Disconnect();
         public abstract bool Send(string message);
-        //public abstract string Recieve();
+        
     }
 }

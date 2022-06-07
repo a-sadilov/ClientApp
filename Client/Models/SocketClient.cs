@@ -31,7 +31,7 @@ namespace Client.Models
                 }
                 else
                 {
-                    MessageBox.Show("Входная строка не может преобразоваться в Port");
+                    MessageBox.Show("Entered string was not converted to Port");
                 }
             }
         }
@@ -65,10 +65,13 @@ namespace Client.Models
                 }
             }
         }
+
+        public override bool IsConnected => this.connectionSocket.Connected;
+
         public SocketClient()
         {
             _serverPort = 8000;
-            _serverIp = IPAddress.Parse("192.168.0.107");
+            _serverIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1];
             connectionSocket = new Socket(AddressFamily.InterNetwork,
                                                SocketType.Stream,
                                                ProtocolType.Tcp);
@@ -134,7 +137,7 @@ namespace Client.Models
             }
             else
             {
-                MessageBox.Show("Нет подключения к серверу");
+                MessageBox.Show("Client is not connected");
                 return false;
             }
         }
@@ -149,57 +152,5 @@ namespace Client.Models
             return builder.ToString();
         }
 
-
-
-
-
-
-        public void TranslateCommand(string command)
-        {
-            try
-            {
-                using (NetworkStream stream = EstablishNewConnectionStream())
-                {
-                    SendCommand(stream, command);
-                    string response = ReceiveResponse(stream);
-                    ShowResponse(response);
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Exception: {0}", e.Message);
-            }
-        }
-
-        private static void SendCommand(NetworkStream stream, string command)
-        {
-            byte[] buffer = Encoding.UTF8.GetBytes(command);
-            stream.Write(buffer, 0, buffer.Length);
-        }
-
-        private static string ReceiveResponse(NetworkStream stream)
-        {
-            byte[] bytesForData = new byte[16];
-            stream.Read(bytesForData, 0, bytesForData.Length);
-            return Encoding.UTF8.GetString(bytesForData);
-        }
-
-        private static void ShowResponse(string response)
-        {
-            MessageBox.Show($"Response received: {0}", response );
-        }
-
-        private static NetworkStream EstablishNewConnectionStream()
-        {
-            TcpClient client = new TcpClient();
-            while(!client.Connected)
-            {
-               // client.Connect(IpAdress, Port);
-            }
-            NetworkStream stream = client.GetStream();
-            return stream;
-        }
-
-        
     }
 }

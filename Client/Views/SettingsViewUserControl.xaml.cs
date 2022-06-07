@@ -9,6 +9,7 @@ namespace Client.Views
     {
         internal static Models.SocketClient client = new Models.SocketClient();
         internal static Models.WebSocketClient wsclient = new Models.WebSocketClient();
+        public static string connectionType;
         public SettingsViewUserControl()
         {
             InitializeComponent();
@@ -19,9 +20,13 @@ namespace Client.Views
             try
             {
                 TextBlock sl = (TextBlock)ConnectionTypeList.SelectedItem;
+                if (sl == null)
+                    throw new Exception("Выберите тип подключения к серверу");
                 switch (sl.Text)
                 {
                     case "Socket":
+                        connectionType = "Socket";
+
                         switch (btnConnect.Content.ToString())
                         {
                             case "Disconnect":
@@ -46,6 +51,7 @@ namespace Client.Views
                         }
                         break;
                     case "WebSocket":
+                        connectionType = "WebSocket";
                         switch (btnConnect.Content.ToString())
                         {
                             case "Disconnect":

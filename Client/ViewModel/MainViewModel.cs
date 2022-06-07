@@ -24,54 +24,6 @@ namespace Client.ViewModel
             }
         }
 
-        public void CloseApp(object obj)
-        {
-            MainWindow win = obj as MainWindow;
-            win.Close();
-        }
-
-        private ICommand _closeCommand;
-
-        public ICommand CloseAppCommand
-        {
-            get
-            {
-                if (_closeCommand == null)
-                {
-                    _closeCommand = new RelayCommand(p => CloseApp(p));
-                }
-                return _closeCommand;
-            }
-        }
-
-        public void MaxApp(object obj)
-        {
-            MainWindow win = obj as MainWindow;
-
-            if (win.WindowState == WindowState.Normal)
-            {
-                win.WindowState = WindowState.Maximized;
-            }
-            else if (win.WindowState == WindowState.Maximized)
-            {
-                win.WindowState = WindowState.Normal;
-            }
-        }
-
-        private ICommand _maxCommand;
-        public ICommand MaxAppCommand
-        {
-            get
-            {
-                if (_maxCommand == null)
-                {
-                    _maxCommand = new RelayCommand(p => MaxApp(p));
-                }
-                return _maxCommand;
-            }
-        }
-
-
         public MainViewModel()
         {
             SettingsVM = new SettingsViewUserControl();
@@ -84,7 +36,11 @@ namespace Client.ViewModel
             CounterViewCommand = new RelayCommand(o =>
             {
                 CurrenView = CounterVM;
-                if (SettingsViewUserControl.client.connectionSocket.Connected)
+                if (SettingsViewUserControl.wsclient.IsConnected)
+                {
+                    new Thread(() => CounterVM.CounterUpdater()).Start();
+                }
+                if (SettingsViewUserControl.client.IsConnected)
                 {
                     new Thread(() => CounterVM.CounterUpdater()).Start();
                 }

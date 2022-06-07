@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 using System;
 using System.Net;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using WebSocketSharp;
@@ -11,28 +12,41 @@ using WebSocketSharp;
 
 namespace Client.Models
 {
-    class WebSocketClient : ClientBase
+    public class WebSocketClient : ClientBase
     {
-        internal static WebSocket connectionSocket;
+        public static WebSocket connectionSocket;
+        public static CurrentCount number;
+        public override bool IsConnected
+        {
+            get
+            {
+                if (connectionSocket.ReadyState == WebSocketState.Open)
+                {
+                    return true;
+                }
+                else return false;
+            } 
+        }
+
         public WebSocketClient()
         {
             _serverPort = 8000;
-            _serverIp = IPAddress.Parse("192.168.0.107");
+            _serverIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1];
             connectionSocket = new WebSocket("ws://" + ServerIp + ":" + ServerPort + "/ServerCounter");
-            //connectionSocket.OnMessage += Recieve;
-        } 
+            connectionSocket.OnMessage += WS_OnMessage;
+        }
         public WebSocketClient(string serverIp, string serverPort)
         {
             ServerPort = serverPort;
             ServerIp = serverIp;
             connectionSocket = new WebSocket("ws://" + ServerIp + ":" + ServerPort + "/ServerCounter");
-            //connectionSocket.OnMessage += Recieve;
+            connectionSocket.OnMessage += WS_OnMessage;
         }
         public override bool Connect()
         {
             try
             {
-                if (connectionSocket.ReadyState != WebSocketState.Open)
+                if (!this.IsConnected)
                 {
 
                     connectionSocket.Connect();
@@ -83,18 +97,12 @@ namespace Client.Models
             }
             else return false;
         }
-        /*public string Recieve(MessageEventArgs e)
-        {
-            var obj = JsonConvert.DeserializeObject<CurrentCount>(e.Data);
-            int counter = obj.counter;
-            return counter.ToString();
-        }*/
 
-        private static void WS_OnMessage(object sender, MessageEventArgs e)
+
+        private void WS_OnMessage(object sender, MessageEventArgs e)
         {
-            var obj = JsonConvert.DeserializeObject<CurrentCount>(e.Data);
-            /*int counter = obj.counter;
-            Dispatcher?.Invoke(() => CounterViewUserControl.CounterLabel.Text = counter.ToString());*/
+            number = JsonConvert.DeserializeObject<CurrentCount>(e.Data);
+            CounterViewUserControl.CurrentCount = number;
         }
     }
 }

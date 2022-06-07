@@ -17,13 +17,7 @@
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         Background="Transparent" MouseDown="Window_MouseDown">
-        <Window.Resources>
-            <ResourceDictionary>
-                <ResourceDictionary.MergedDictionaries>
-                    <!--ResourceDictionary Source="/resources/icons.xaml"/-->
-                </ResourceDictionary.MergedDictionaries>
-            </ResourceDictionary>
-        </Window.Resources>
+        
     <Window.DataContext>
         <viewModel:MainViewModel/>
     </Window.DataContext>
@@ -74,7 +68,7 @@
                 Style="{StaticResource CloseButtonStyle}"
                 Grid.Row="0"
                 Grid.Column="1"
-                Command="{Binding CloseAppCommand}"
+                Click="CloseButton_Click"
                 />
         </Grid>
     </Border>

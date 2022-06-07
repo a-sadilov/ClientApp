@@ -13,10 +13,5 @@ namespace Client.Models.Core
         {
             command = cmd;
         }
-        /*public string Cmd
-        {
-            get { return command.ToString();}
-            set { command = Enum.Parse(Command, value);}
-        }*/
     }
 }
