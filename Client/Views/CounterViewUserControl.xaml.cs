@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using Client.ViewModel;
+using Client.Models;
+using Client.Models.Core;
+using Newtonsoft.Json;
 
 namespace Client.Views
 {
@@ -20,25 +14,44 @@ namespace Client.Views
     /// </summary>
     public partial class CounterViewUserControl : UserControl
     {
-        internal static Models.Client client;
-        public CounterViewUserControl(Models.Client _client)
+        private static CurrentCount _currentCount = new CurrentCount();
+        public static CurrentCount CurrentCount
         {
-            InitializeComponent();
-            client = _client;
+            get { return _currentCount; }
+            set
+            { _currentCount = value;
+            }
         }
 
+        public CounterViewUserControl()
+        {
+            InitializeComponent();
+            ClearButton.IsEnabled = false;
+        }
         private void StartStopButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 ClearButton.IsEnabled = true;
-                string cmd = ClearButton.Content.ToString();
-                byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                byte[] rxBuf = new byte[12];
-                if (client.SendAndGetResponse(ref messageToServer, ref rxBuf))
+                string cmd = StartStopButton.Content.ToString();
+                if (SettingsViewUserControl.connectionType == "Socket")
                 {
-                    string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
-                    if (serverResponse == "200OK_" + cmd)
+                    if (SettingsViewUserControl.client.Send(cmd))
+                    {
+                        switch (cmd)
+                        {
+                            case "Start":
+                                StartStopButton.Content = "Stop";
+                                break;
+                            case "Stop":
+                                StartStopButton.Content = "Start";
+                                break;
+                        }
+                    }
+                }
+                if (SettingsViewUserControl.connectionType == "WebSocket")
+                {
+                    if (SettingsViewUserControl.wsclient.Send(cmd))
                     {
                         switch (cmd)
                         {
@@ -56,7 +69,6 @@ namespace Client.Views
             {
                 MessageBox.Show(E.Message.ToString());
             }
-            
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
@@ -64,22 +76,80 @@ namespace Client.Views
             try
             {
                 string cmd = ClearButton.Content.ToString();
-                byte[] messageToServer = Encoding.UTF8.GetBytes(cmd);
-                byte[] rxBuf = new byte[12];
-                if (client.SendAndGetResponse(ref messageToServer, ref rxBuf))
+                if (SettingsViewUserControl.connectionType == "Socket")
                 {
-                    string serverResponse = Encoding.UTF8.GetString(rxBuf, 0, rxBuf.Count());
-                    if(serverResponse == "200OK_" + cmd)
+                    if (SettingsViewUserControl.client.Send(cmd))
                     {
                         CounterLabel.Text = "0";
-                        ClearButton.IsEnabled = false;
                         StartStopButton.Content = "Start";
+                        ClearButton.IsEnabled = false;
+                    }
+                }
+                if (SettingsViewUserControl.connectionType == "WebSocket")
+                {
+                    if (SettingsViewUserControl.wsclient.Send(cmd))
+                    {
+                        CounterLabel.Text = "0";
+                        StartStopButton.Content = "Start";
+                        ClearButton.IsEnabled = false;
                     }
                 }
             }
             catch (Exception E)
             {
-                MessageBox.Show(E.Message.ToString());
+                MessageBox.Show(E.Message + ":\n" + E.StackTrace);
+            }
+        }
+        public void CounterUpdater()
+        {
+            if (SettingsViewUserControl.connectionType == "Socket")
+            {
+                while (SettingsViewUserControl.client.IsConnected)
+                {
+                    try
+                    {
+                        string response = SettingsViewUserControl.client.Recieve();
+                        //this.currentCount.counter = response;
+                        if (response == null)
+                        {
+                            throw new Exception();
+                        }
+                        else
+                        {
+                            Dispatcher?.Invoke(() => CounterLabel.Text = response);
+                            Dispatcher?.Invoke(() => StartStopButton.Content = "Stop");
+                            InitializeComponent();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Thread.CurrentThread.Abort();
+                    }
+                }
+            }
+            if (SettingsViewUserControl.connectionType == "WebSocket")
+            {
+                while (SettingsViewUserControl.wsclient.IsConnected)
+                {
+                    try
+                    {
+                        string answer = CurrentCount.counter.ToString();
+                        if (answer == null)
+                        {
+                            throw new Exception();
+                        }
+                        else
+                        {
+                            Dispatcher?.Invoke(() => CounterLabel.Text = answer);
+                            InitializeComponent();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Thread.CurrentThread.Abort();
+                    }
+                }
+                
             }
         }
     }

@@ -16,14 +16,8 @@
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
-        Background="Transparent">
-        <Window.Resources>
-            <ResourceDictionary>
-                <ResourceDictionary.MergedDictionaries>
-                    <!--ResourceDictionary Source="/resources/icons.xaml"/-->
-                </ResourceDictionary.MergedDictionaries>
-            </ResourceDictionary>
-        </Window.Resources>
+        Background="Transparent" MouseDown="Window_MouseDown">
+        
     <Window.DataContext>
         <viewModel:MainViewModel/>
     </Window.DataContext>
@@ -47,14 +41,18 @@
                            FontSize="32"  FontFamily="Arial Rounded MT Bold"
                            Margin="0,0,0,0"/>
             <StackPanel Grid.Row="1">
-                <RadioButton Content="Settings"
+                <RadioButton 
+                    x:Name="MainSettingsBtn"
+                    Content="Settings"
                              Height="50"
                              Foreground="White"
                              FontSize="18"
                              Style="{StaticResource MenuButtonTheme}"
                              IsChecked="True"
                              Command="{Binding SettingsViewCommand}"/>
-                <RadioButton Content="Counter"
+                <RadioButton 
+                    x:Name="MainCounterBtn"
+                    Content="Counter"
                              Height="50"
                              Foreground="White"
                              FontSize="18"
@@ -66,6 +64,12 @@
                             Grid.Column="1"
                             Margin="10"
                             Content="{Binding CurrenView}"/>
+            <Button
+                Style="{StaticResource CloseButtonStyle}"
+                Grid.Row="0"
+                Grid.Column="1"
+                Click="CloseButton_Click"
+                />
         </Grid>
     </Border>
 </Window>

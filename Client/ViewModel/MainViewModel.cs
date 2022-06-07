@@ -1,5 +1,8 @@
 ﻿using Client.Core;
 using Client.Views;
+using System.Threading;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Client.ViewModel
 {
@@ -24,7 +27,7 @@ namespace Client.ViewModel
         public MainViewModel()
         {
             SettingsVM = new SettingsViewUserControl();
-            CounterVM = new CounterViewUserControl(SettingsViewUserControl.client);
+            CounterVM = new CounterViewUserControl();
             CurrenView = SettingsVM;
             SettingsViewCommand = new RelayCommand(o =>
             {
@@ -33,6 +36,14 @@ namespace Client.ViewModel
             CounterViewCommand = new RelayCommand(o =>
             {
                 CurrenView = CounterVM;
+                if (SettingsViewUserControl.wsclient.IsConnected)
+                {
+                    new Thread(() => CounterVM.CounterUpdater()).Start();
+                }
+                if (SettingsViewUserControl.client.IsConnected)
+                {
+                    new Thread(() => CounterVM.CounterUpdater()).Start();
+                }
             });
         }
     }

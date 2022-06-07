@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Client.Views" 
              xmlns:models="clr-namespace:Client.Models" 
-             d:DataContext="{d:DesignInstance Type=models:Client}"
+             d:DataContext="{d:DesignInstance Type=models:SocketClient}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent">
     <UserControl.DataContext>
-        <models:Client/>
+        <models:SocketClient/>
     </UserControl.DataContext>
     <StackPanel
         Margin="0,0,0,20"
@@ -26,9 +26,11 @@
         <TextBox 
             x:Name="textBoxServerIp"
             Margin="5"
-            >
+            Height="25"
+            Foreground="Black"
+            FontFamily="Arial Rounded MT Bold"
+            FontSize="16">
             <TextBox.Text>
-                
                 <Binding Path="ServerIp">
                     <Binding.ValidationRules>
                         <ExceptionValidationRule />
@@ -42,10 +44,13 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Margin="5"/>
-
         <TextBox
             x:Name="textBoxPort"
             Margin="5"
+            Height="25"
+            Foreground="Black"
+            FontFamily="Arial Rounded MT Bold"
+            FontSize="16"
             >
             <TextBox.Text>
                 <Binding Path="ServerPort">
@@ -55,6 +60,31 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
+        <TextBlock
+            x:Name="ConnectionTypeBlock"
+            Style="{StaticResource MenuTextBlockStyle}"
+            Text="Connection-Type:"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="5"/>
+        <ComboBox Name="ConnectionTypeList" Height="25" Margin="5">
+            <TextBlock
+                Style="{StaticResource MenuTextBlockStyle}"
+                Text="Socket"
+                HorizontalAlignment="Center"
+                Height="25"
+                Foreground="Black"
+                FontFamily="Arial Rounded MT Bold"
+                FontSize="16"/>
+            <TextBlock
+                Style="{StaticResource MenuTextBlockStyle}"
+                Text="WebSocket"
+                HorizontalAlignment="Center"
+                Height="25"
+                Foreground="Black"
+                FontFamily="Arial Rounded MT Bold"
+                FontSize="16"/>
+        </ComboBox>
         <Button 
             x:Name="btnConnect"
             Margin="5"
